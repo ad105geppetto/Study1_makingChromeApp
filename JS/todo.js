@@ -2,23 +2,27 @@ const todoFrom = document.getElementById('todo-form');
 const todoInput = todoFrom.querySelector('input');
 const todoList = document.getElementById('todo-list');
 
-const TODOS_KEY = 'todos'
+const TODOS_KEY = 'todos';
 
+// 여기를 데이터베이스라고 생각해야한다.
 let toDos = [];
 
 function saveTodos(event) {
-    localStorage.setItem(TODOS_KEY, JSON.stringify(toDos))
+    localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
 }
 
 function deleteTodo(event) {
     const li = event.target.parentElement;
+    toDos = toDos.filter(toDo => toDo.id !== parseInt(li.id))
     li.remove();
+    saveTodos();
 }
 
 function paintTodo(newTodo) {
     const li = document.createElement('li');
+    li.id = newTodo.id;
     const span = document.createElement('span');
-    span.innerText = newTodo;
+    span.innerText = newTodo.text;
     const button = document.createElement('button');
     button.innerText = '\u{274C}';
     button.addEventListener('click', deleteTodo)
@@ -31,8 +35,12 @@ function handleToDoSubmit(event) {
     event.preventDefault();
     const newTodo = todoInput.value;
     todoInput.value = '';
-    toDos.push(newTodo);
-    paintTodo(newTodo);
+    const newTodoObj = {
+        id: Date.now(),
+        text: newTodo
+    }
+    toDos.push(newTodoObj);
+    paintTodo(newTodoObj);
     saveTodos()
 }
 
